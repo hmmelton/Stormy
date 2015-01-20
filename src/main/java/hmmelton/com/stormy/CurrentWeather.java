@@ -87,7 +87,7 @@ public class CurrentWeather {
         mTime = time;
     }
 
-    public double getTemperature() {
+    public int getTemperature() {
         return (int) Math.round(mTemperature);
     }
 
