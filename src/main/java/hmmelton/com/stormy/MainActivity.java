@@ -76,21 +76,25 @@ public class MainActivity extends ActionBarActivity {
         getForecast(mGps[0], mGps[1]);
     }
 
-
     private void getGps() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (isGpsOn(lm)) {
-            List<String> providers = lm.getProviders(true);
+        if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            Location location = lm.getLastKnownLocation(providers.get(0));
+            if (location != null) {
+                mGps[0] = location.getLatitude();
+                mGps[1] = location.getLongitude();
 
-            mGps[0] = location.getLatitude();
-            mGps[1] = location.getLongitude();
-            (new GetAddressTask(this)).execute(location);
+                (new GetAddressTask(this)).execute(location);
+            }
+            else {
+                mLocationLabel.setText(getString(R.string.no_location));
+            }
+
         }
         else {
-            //makeUserTurnOnGps();
+            makeUserTurnOnGps();
         }
     }
 
@@ -119,15 +123,6 @@ public class MainActivity extends ActionBarActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    private boolean isGpsOn(LocationManager lm) {
-        boolean enabled = false;
-        if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            enabled = true;
-        }
-
-        return enabled;
     }
 
     private void getForecast(double latitude, double longitude) {
